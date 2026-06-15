@@ -69,7 +69,7 @@ SMTP_PORT = 587   # TLS port
 RSS_FEEDS = [
     {
         "name": "Manorama Online",
-        "url" : "https://www.manoramaonline.com/news/kerala.rss",
+        "url" : "https://www.onmanorama.com/kerala.feeds.onmrss.xml",
         "lang": "Malayalam",
         "emoji": "📰"
     },
@@ -81,8 +81,8 @@ RSS_FEEDS = [
     },
     {
         "name": "Mathrubhumi",
-        "url" : "https://www.mathrubhumi.com/polopoly_fs/rss/kerala.rss",
-        "lang": "Malayalam",
+        "url" : "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "lang": "English",
         "emoji": "📰"
     },
 ]
