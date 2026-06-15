@@ -1,0 +1,13 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# requirements.txt — Automated Bot Dependencies
+# Install locally with:  pip install -r requirements.txt
+# ─────────────────────────────────────────────────────────────────────────────
+
+# HTTP requests (used to call OpenWeatherMap API and GitHub API)
+requests>=2.31.0
+
+# RSS feed parser (used to fetch news headlines from Manorama, Hindu, Mathrubhumi)
+feedparser>=6.0.10
+
+# Load .env file for local development (not needed in GitHub Actions)
+python-dotenv>=1.0.0

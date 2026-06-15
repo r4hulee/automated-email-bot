@@ -1,0 +1,18 @@
+[
+  {
+    "name": "automated-email-bot",
+    "description": "A Python automation bot that sends daily weather alerts and news digests via email using GitHub Actions.",
+    "url": "https://github.com/r4hulee/automated-email-bot",
+    "language": "Python",
+    "topics": ["python", "automation", "github-actions", "email"],
+    "homepage": ""
+  },
+  {
+    "name": "portfolio",
+    "description": "Personal portfolio website showcasing projects and skills. Built with semantic HTML, CSS design system, and vanilla JavaScript.",
+    "url": "https://github.com/r4hulee/portfolio",
+    "language": "JavaScript",
+    "topics": ["portfolio", "web", "html", "css", "javascript"],
+    "homepage": "https://r4hulee.github.io/portfolio"
+  }
+]

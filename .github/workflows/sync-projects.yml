@@ -1,0 +1,114 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# .github/workflows/sync-projects.yml
+#
+# Automated Bot — Portfolio Sync Workflow
+# Fetches all public GitHub repos for r4hulee, builds projects.json,
+# and auto-commits it to the r4hulee/portfolio repository.
+#
+# Triggers:
+#   • Every push to the 'main' branch of this repo
+#   • Every day at midnight IST (6:30 PM UTC)
+#   • Manual trigger (workflow_dispatch)
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: "🔄 Sync GitHub Projects to Portfolio"
+
+on:
+
+  # ── Trigger 1: every push to main ──────────────────────────────────────────
+  push:
+    branches:
+      - main
+    # Optional: only trigger if certain files changed
+    # paths:
+    #   - "sync_projects.py"
+    #   - "requirements.txt"
+
+  # ── Trigger 2: daily at midnight IST (18:30 UTC = 12:00 AM IST) ─────────────
+  schedule:
+    - cron: "30 18 * * *"
+    # ┌───── minute (30)
+    # │  ┌── hour in UTC (18 = 6 PM UTC = 11:30 PM IST + 30 min = midnight IST)
+    # │  │   ┌ day of month (* = every day)
+    # │  │   │  ┌ month (* = every month)
+    # │  │   │  │  ┌ day of week (* = every day)
+    # 30 18  *  *  *
+
+  # ── Trigger 3: manual run from GitHub Actions tab ─────────────────────────
+  workflow_dispatch:
+
+# ── Job definition ─────────────────────────────────────────────────────────────
+jobs:
+
+  sync-portfolio:
+    name: "Fetch Repos & Update Portfolio"
+    runs-on: ubuntu-latest
+
+    # Give this job write permission to the current repo
+    # (needed to commit the local projects.json if you also want it here)
+    permissions:
+      contents: write
+
+    steps:
+
+      # ── 1. Get the code ───────────────────────────────────────────────────
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      # ── 2. Set up Python ──────────────────────────────────────────────────
+      - name: "🐍 Set up Python 3.12"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      # ── 3. Install dependencies ───────────────────────────────────────────
+      - name: "📦 Install Python dependencies"
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # ── 4. Run the sync script ─────────────────────────────────────────────
+      # sync_projects.py does all the work:
+      #   • Calls GitHub API → fetches all public repos
+      #   • Builds projects.json
+      #   • Pushes it to r4hulee/portfolio via GitHub Contents API
+      - name: "🔄 Run Portfolio Sync"
+        env:
+          # PORTFOLIO_PAT must have  Contents: Write  access on r4hulee/portfolio
+          # Add it in: automated-email-bot → Settings → Secrets → Actions
+          PORTFOLIO_PAT: ${{ secrets.PORTFOLIO_PAT }}
+
+        run: |
+          echo "🔄 Starting portfolio sync for r4hulee..."
+          python sync_projects.py
+          echo "✅ Sync complete."
+
+      # ── 5. Commit local projects.json to THIS repo too (optional) ─────────
+      # This keeps a copy of projects.json in automated-email-bot as well.
+      # If you don't want this, you can remove this step.
+      - name: "💾 Commit local projects.json (this repo)"
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Only commit if projects.json actually changed
+          if git diff --quiet projects.json; then
+            echo "ℹ️  projects.json unchanged — skipping commit."
+          else
+            git add projects.json
+            git commit -m "🤖 Auto-update projects.json [skip ci]"
+            git push
+            echo "✅ projects.json committed to this repo."
+          fi
+
+      # ── 6. Report failure ──────────────────────────────────────────────────
+      - name: "❌ Notify on failure"
+        if: failure()
+        run: |
+          echo "::error::Portfolio sync failed. Check logs above for details."
+          echo "Common causes:"
+          echo "  1. PORTFOLIO_PAT secret is missing or expired"
+          echo "  2. PAT does not have Contents: Write on r4hulee/portfolio"
+          echo "  3. GitHub API rate limit exceeded (try again in 1 hour)"
+          echo "  4. Network error connecting to GitHub API"
