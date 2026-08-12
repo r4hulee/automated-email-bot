@@ -1,13 +1,5 @@
 [
   {
-    "name": "computer-vision",
-    "description": "",
-    "url": "https://github.com/r4hulee/computer-vision",
-    "language": "Python",
-    "topics": [],
-    "homepage": ""
-  },
-  {
     "name": "portfolio",
     "description": "",
     "url": "https://github.com/r4hulee/portfolio",
@@ -19,6 +11,14 @@
     "name": "automated-email-bot",
     "description": "",
     "url": "https://github.com/r4hulee/automated-email-bot",
+    "language": "Python",
+    "topics": [],
+    "homepage": ""
+  },
+  {
+    "name": "computer-vision",
+    "description": "",
+    "url": "https://github.com/r4hulee/computer-vision",
     "language": "Python",
     "topics": [],
     "homepage": ""
